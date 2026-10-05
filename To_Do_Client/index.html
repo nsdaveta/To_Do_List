@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo-192.png" />
+    <link rel="apple-touch-icon" href="/logo-512.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="To Do App" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>To Do App - Organizer</title>
+    <script>
+      // Environment detection
+      const isTauriEnv = !!(window.__TAURI_INTERNALS__ || window.__TAURI__);
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      window.isTauri = isTauriEnv;
+      window.isDesktopTauri = isTauriEnv && !isMobileDevice;
+    </script>
+  </head>     
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="/connectivity.js"></script>
+    <script>
+      (function() {
+        // Service worker and environment constants
+        const isTauri = window.isTauri;
+        const isFileProtocol = window.location.protocol === 'file:';
+
+        // 1. Service Worker Management
+        if ('serviceWorker' in navigator) {
+          if (isTauri) {
+            // Unregister any active service worker in Tauri environment 
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+              for (let reg of registrations) reg.unregister();
+            });
+          } else if (!isFileProtocol) {
+            window.addEventListener('load', () => {
+              navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed:', err));
+            });
+          }
+        }
+
+        // 2. Initialize Robust Offline Detection
+        if (typeof initConnectivityTracker === 'function') {
+          const checkUrl = (window.location.hostname === 'localhost' || 
+                            window.location.hostname === '127.0.0.1' || 
+                            window.location.protocol === 'tauri:')
+                            ? 'http://localhost:3000/todos'
+                            : 'https://to-do-server-1yuc.onrender.com/todos';
+          initConnectivityTracker(checkUrl);
+        }
+
+        // 3. App Lockdown (Disable Browser Features in Tauri)
+        if (isTauri) {
+          // Always add tauri-mode for aesthetics
+          document.body.classList.add('tauri-mode');
+
+          // Detect "Quick Test" mode (development on localhost)
+          const isQuickTest = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+          if (!isQuickTest) {
+            // Add lockdown class only in production
+            document.body.classList.add('lockdown');
+
+            // Disable right-click
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // Disable DevTools, Refresh, and System shortcuts
+            document.addEventListener('keydown', (e) => {
+              // Refresh (F5, Ctrl+R, Cmd+R)
+              if (e.key === 'F5' || (e.ctrlKey && (e.key === 'r' || e.key === 'R')) || (e.metaKey && (e.key === 'r' || e.key === 'R'))) {
+                e.preventDefault();
+              }
+              // Fullscreen (F11) - Disable browser fullscreen to keep Tauri window control
+              if (e.key === 'F11') {
+                e.preventDefault();
+              }
+              // DevTools (F12, Ctrl+Shift+I, Cmd+Option+I, Ctrl+Shift+J, Ctrl+Shift+C)
+              if (e.key === 'F12' || 
+                  (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+                  (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'I'))) {
+                e.preventDefault();
+              }
+              // Print (Ctrl+P)
+              if (e.ctrlKey && (e.key === 'p' || e.key === 'P')) {
+                e.preventDefault();
+              }
+              // Save (Ctrl+S)
+              if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+              }
+              // Find (Ctrl+F)
+              if (e.ctrlKey && (e.key === 'f' || e.key === 'F')) {
+                e.preventDefault();
+              }
+              // View Source (Ctrl+U)
+              if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
+                e.preventDefault();
+              }
+              // Select All (Ctrl+A) - already handled by CSS user-select: none, but for extra safety:
+              if (e.ctrlKey && (e.key === 'a' || e.key === 'A')) {
+                 const target = e.target;
+                 if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+                   e.preventDefault();
+                 }
+              }
+              // Zoom (Ctrl+Plus, Ctrl+Minus, Ctrl+0)
+              if (e.ctrlKey && (e.key === '=' || e.key === '+' || e.key === '-' || e.key === '0')) {
+                e.preventDefault();
+              }
+            });
+
+
+            // Disable Pinch Zoom (Multi-touch)
+            document.addEventListener('wheel', (e) => {
+              if (e.ctrlKey) e.preventDefault();
+            }, { passive: false });
+
+            document.addEventListener('touchstart', (e) => {
+              if (e.touches.length > 1) e.preventDefault();
+            }, { passive: false });
+
+            // Prevent Browser Status Bar URL Preview Tooltip on Hover in Tauri without flickering or color changes
+            document.addEventListener('mouseover', (e) => {
+              let a = e.target.closest('a');
+              if (a && a.hasAttribute('href')) {
+                // Lock exact computed styles before removing href to prevent black color flashing
+                const cs = window.getComputedStyle(a);
+                a.style.setProperty('color', cs.color, 'important');
+                a.style.setProperty('text-decoration', cs.textDecoration, 'important');
+                a.style.setProperty('cursor', 'pointer', 'important');
+
+                a.setAttribute('data-href', a.getAttribute('href'));
+                a.removeAttribute('href');
+              }
+            });
+            document.addEventListener('mouseout', (e) => {
+              let a = e.target.closest('a');
+              if (a && a.hasAttribute('data-href')) {
+                // Only restore href if mouse is actually leaving the entire <a> element
+                if (!e.relatedTarget || !a.contains(e.relatedTarget)) {
+                  a.setAttribute('href', a.getAttribute('data-href'));
+                  a.removeAttribute('data-href');
+                  a.style.removeProperty('color');
+                  a.style.removeProperty('text-decoration');
+                  a.style.removeProperty('cursor');
+                }
+              }
+            });
+            document.addEventListener('click', (e) => {
+              let a = e.target.closest('a');
+              if (a && a.hasAttribute('data-href')) {
+                a.setAttribute('href', a.getAttribute('data-href'));
+                a.removeAttribute('data-href');
+                a.style.removeProperty('color');
+                a.style.removeProperty('text-decoration');
+                a.style.removeProperty('cursor');
+              }
+            }, { capture: true });
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "bundle": {
+    "windows": {
+      "wix": {
+        "fragmentPaths": ["x86-restriction.wxs"],
+        "componentGroupRefs": ["X86Restriction"]
+      }
+    }
+  }
+}
