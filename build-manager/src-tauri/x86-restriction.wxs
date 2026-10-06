@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <!-- This condition ensures the installer only runs on 32-bit Windows -->
+    <Condition Message="This 32-bit installer is strictly for 32-bit systems. Please use the 64-bit installer for this computer.">
+      <![CDATA[Installed OR NOT VersionNT64]]>
+    </Condition>
+
+    <!-- We define a dummy component group to force the linker to include this fragment -->
+    <ComponentGroup Id="X86Restriction">
+      <Component Id="X86RestrictionDummy" Guid="E1F2A3B4-C5D6-4E7F-8A9B-0C1D2E3F4A5B" Directory="INSTALLDIR">
+        <Condition>0</Condition> <!-- This component will never actually install anything -->
+        <CreateFolder />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

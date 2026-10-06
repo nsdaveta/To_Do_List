@@ -1,0 +1,208 @@
+.sidebar {
+  width: 250px;
+  height: 100%;
+  padding-top: 32px; /* Space for TitleBar in Tauri */
+  background: rgba(26, 30, 42, 0.1); /* Minimal opacity for maximum transparency */
+  backdrop-filter: blur(6px) saturate(2.0);
+  -webkit-backdrop-filter: blur(6px) saturate(2.0);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: 54px;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  margin-bottom: 24px;
+}
+
+.menu-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: default;
+  transition: background 0.1s;
+  color: #fff;
+}
+
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-brand {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  transition: opacity 0.2s;
+}
+
+.sidebar.collapsed .nav-brand {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-links {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: hidden; /* No internal scrolling as requested */
+  overflow-x: hidden;
+  padding: 0 4px;
+}
+
+.sidebar-links::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-links::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-links::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.65); /* Brighter for better readability */
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500; /* Slightly bolder */
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+  min-width: 1.1rem;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  width: 100%;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.user-profile.collapsed {
+  padding: 8px 0;
+  justify-content: center;
+  gap: 0;
+}
+
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  border-radius: 6px;
+  color: white;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(0, 103, 192, 0.4);
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Important for ellipsis */
+}
+
+.username {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.2;
+  word-break: break-word; /* Ensure it doesn't overflow the container */
+}
+
+.logout-btn {
+  background: transparent;
+  border: none;
+  width: 100%;
+  color: #ff99a4;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 153, 164, 0.1) !important;
+  color: #ffb3bc !important;
+}
+
+.logout-btn.collapsed {
+  justify-content: center;
+  padding: 8px 0;
+}
+
+/* Scrollable content area fix */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+

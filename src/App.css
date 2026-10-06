@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+:root {
+  --primary: #0067c0; /* Windows 11 Accent Color */
+  --primary-hover: #005fb8;
+  --secondary: #60cdff;
+  --accent: #f43f5e;
+  --bg-dark: rgba(45, 45, 45, 0.75); /* Lighter Mica-like background */
+  --card-bg: rgba(60, 60, 60, 0.65);
+  --text-main: #ffffff;
+  --text-muted: #b0b0b0;
+  --border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(45, 45, 45, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --success: #6ccb5f;
+  --error: #ff99a4;
+  --warning: #fff4ce;
+  --panel-blur: 50px;
+  --card-blur: 30px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+::placeholder {
+  color: rgba(255, 255, 255, 0.7); /* Improved contrast for accessibility */
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI Variable Text', 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #252525 !important; /* Lighter premium dark fallback */
+  color: var(--text-main);
+  height: 100dvh;
+  overflow: hidden; /* App container handles scrolling */
+}
+
+/* Maintain transparency only in Tauri for Mica effect */
+body.tauri-mode {
+  background: transparent !important;
+}
+
+/* Add a subtle window border in Tauri mode to feel more native */
+body.tauri-mode .App {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px; /* Match Tauri window rounding if applicable */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* Inner highlight */
+  transition: border-radius 0.2s, border 0.2s;
+}
+
+body.tauri-mode.maximized .App {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.lockdown {
+  user-select: none; /* Disable text selection */
+  -webkit-user-select: none;
+}
+
+
+body.lockdown input, 
+body.lockdown textarea {
+  user-select: text !important; /* Re-enable for inputs */
+  -webkit-user-select: text !important;
+}
+
+body.lockdown img {
+  -webkit-user-drag: none; /* Disable image dragging */
+}
+
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./assets/tasks-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  animation: mesh-gradient 20s ease infinite; /* Restored animation */
+  z-index: -2;
+  opacity: 0.9; /* Increased opacity for a brighter look */
+  filter: brightness(1.1);
+}
+
+/* Show background image in Tauri but blend it with Mica translucency */
+body.tauri-mode::before {
+  display: block;
+  opacity: 0.45; /* Increased opacity for better visibility on desktop */
+  filter: blur(2px) brightness(1.2); /* Added brightness boost */
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% -20%, rgba(58, 58, 58, 0.15) 0%, transparent 80%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes mesh-gradient {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Segoe UI Variable Display', 'Outfit', sans-serif;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+button {
+  cursor: default; /* Desktop apps use default cursor for buttons usually */
+  border: none;
+  outline: none;
+  font-family: inherit;
+  user-select: none;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+#root {
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+}
+
+body.tauri-mode #root {
+  padding-top: 0; /* Sidebar will now span full height */
+}
+
+.App {
+  flex: 1;
+  display: flex;
+  flex-direction: column; /* Default for web (Top Navbar) */
+  min-height: 100dvh;
+}
+
+.App.tauri-mode {
+  flex-direction: row; /* Desktop layout (Sidebar) */
+  height: 100vh;
+  overflow: hidden;
+  padding-top: 0; /* No space needed for native titlebar */
+}
+
+.App.web-mode {
+  height: 100dvh;
+}
+
+/* Content Area */
+.App.web-mode > main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 120px 20px 20px 20px; /* 120px top padding for navbar */
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  /* Custom scrollbar for main content area */
+}
+
+.App.web-mode > main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.App.tauri-mode > main {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Fluent UI Panel Style */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--panel-blur)) saturate(1.8);
+  -webkit-backdrop-filter: blur(var(--panel-blur)) saturate(1.8);
+  border: 1px solid var(--glass-border);
+  border-top-color: rgba(255, 255, 255, 0.15); /* Subtle top-light effect */
+  border-radius: 8px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-card {
+  background: rgba(45, 45, 45, 0.45);
+  backdrop-filter: blur(var(--card-blur));
+  -webkit-backdrop-filter: blur(var(--card-blur));
+  border: 1px solid var(--glass-border);
+  border-top-color: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* Shimmer Animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Page Transitions */
+@keyframes pageEnter {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.App > * {
+  animation: pageEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Fluent Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile: more padding for stacked navbar */
+@media (max-width: 480px) {
+  .App.web-mode > main {
+    padding: 180px 16px 16px 16px;
+  }
+}

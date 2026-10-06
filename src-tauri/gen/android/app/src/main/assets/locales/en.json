@@ -1,0 +1,10 @@
+{
+  "app_name": "To-Do App",
+  "home": "Home",
+  "tasks": "My Tasks",
+  "login": "Sign In",
+  "register": "Sign Up",
+  "logout": "Logout",
+  "add_task": "Add Task",
+  "clear_completed": "Clear Completed"
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do Build Master</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="/logo-192.png" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+  <div id="app">
+    <div class="header">
+      <div>
+        <h1 id="main-title">Build Manager Pro</h1>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+          <p style="color: #94a3b8; margin: 0;">Project:</p>
+          <code id="project-path-display" style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: #60a5fa;">Loading...</code>
+          <button id="open-project-dir" style="background: transparent; border: none; color: #94a3b8; cursor: pointer; display: flex; align-items: center; padding: 2px;" title="Open Folder">
+            <i data-lucide="folder-open" style="width: 14px; height: 14px;"></i>
+          </button>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="button-group">
+          <button id="build-x64" class="build-btn" title="Build Windows x64">
+            <i data-lucide="monitor"></i>
+            Windows x64
+          </button>
+          <button id="build-x86" class="build-btn" title="Build Windows x86">
+            <i data-lucide="monitor-dot"></i>
+            Windows x86
+          </button>
+          <button id="build-windows-both" class="build-btn" title="Build x64 & x86">
+            <i data-lucide="monitor-check"></i>
+            Windows (Both)
+          </button>
+          <button id="quick-test" class="build-btn test-btn" title="Run Tauri Dev">
+            <i data-lucide="zap"></i>
+            Quick Test
+          </button>
+        </div>
+        <div class="button-group">
+          <button id="android-trigger" class="build-btn android-btn">
+            <i data-lucide="smartphone"></i>
+            Build Android
+          </button>
+          <button id="build-all" class="build-btn all-btn">
+            <i data-lucide="layers"></i>
+            Build All
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="admin-banner" class="admin-warning" style="display: none;">
+      <i data-lucide="alert-triangle"></i>
+      <span>Restricted Privileges: Administrator rights recommended for signing.</span>
+    </div>
+
+    <div class="status-grid">
+      <!-- Step 1: Git Sync -->
+      <div id="step-git" class="glass-card step-card">
+        <div class="step-icon">
+          <i data-lucide="git-branch"></i>
+        </div>
+        <div>
+          <div style="font-weight: 600;">Git Sync</div>
+          <div style="font-size: 0.8rem; color: #94a3b8;">Stage & Push</div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progress-git" class="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Environment -->
+      <div id="step-env" class="glass-card step-card">
+        <div class="step-icon">
+          <i data-lucide="settings"></i>
+        </div>
+        <div>
+          <div style="font-weight: 600;">Environment</div>
+          <div style="font-size: 0.8rem; color: #94a3b8;">Paths & Tools</div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progress-env" class="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Step 3: Tauri Build -->
+      <div id="step-build" class="glass-card step-card">
+        <div class="step-icon">
+          <i data-lucide="package"></i>
+        </div>
+        <div>
+          <div style="font-weight: 600;">Distribution</div>
+          <div style="font-size: 0.8rem; color: #94a3b8;">Tauri Compile</div>
+          <div id="build-timer" style="font-size: 0.8rem; color: #60a5fa; margin-top: 4px;">--:--</div>
+        </div>
+        <div class="progress-bar-container">
+          <div id="progress-build" class="progress-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="terminal-container glass-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <div
+          style="font-size: 0.8rem; font-weight: 600; color: #94a3b8; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+          BASH OUTPUT
+        </div>
+        <div id="status-text" style="font-size: 0.8rem; color: #94a3b8;">Ready to build</div>
+      </div>
+      <div id="terminal">
+        <div class="terminal-line" style="color: #60a5fa;">> Log initialized. Waiting for action...</div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/main.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>
