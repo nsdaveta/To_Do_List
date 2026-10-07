@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import  App from './app.jsx'
+import  App from './App.jsx'
 import { HashRouter } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
 import { DialogProvider } from './components/Dialog/DialogContext.jsx'
