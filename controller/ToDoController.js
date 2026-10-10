@@ -13,11 +13,17 @@ const sendGmail = async (to, subject, html) => {
     try {
         const response = await fetch(bridgeUrl, {
             method: 'POST',
-            header: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ to, subject, html })
         });
+        
+        if (!response.ok) {
+            console.error(`❌ Bridge returned status ${response.status}: ${response.statusText}`);
+            return false;
+        }
+        
         const result = await response.text();
-        return result === "Success";
+        return result.trim() === "Success";
     } catch (error) {
         console.error("❌ Gmail Bridge Error:", error.message);
         return false;
