@@ -5,7 +5,7 @@ const isLocal = window.location.hostname === 'localhost' ||
                 window.location.protocol === 'tauri:';
 
 const api = axios.create({
-    baseURL: 'https://to-do-server-1yuc.onrender.com/todos',
+    baseURL: 'https://to-do-list-irhj.onrender.com/todos',
     headers: {
         'Content-Type': 'application/json'
     }
